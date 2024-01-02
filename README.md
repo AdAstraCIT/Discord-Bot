@@ -5,7 +5,7 @@ Ad Astra is a Discord bot that adds fun and utility to your server. From space-t
 ## Getting Started
 
 1. Invite Ad Astra to your Discord server using the provided OAuth2 URL.
-2. Set up your `.env` file with the necessary configurations (e.g., BOT_TOKEN).
+2. Set up your `.env` file with the necessary configurations (e.g., TOKEN).
 3. Run the bot using `python bot.py`.
 
 ## Commands
