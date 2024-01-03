@@ -17,6 +17,16 @@ async def on_ready():
     print(f'Logged in as {bot.user.name} ({bot.user.id})')
     change_status.start()
 
+@bot.event
+async def on_member_join(member):
+    welcome_channel = member.guild.system_channel
+    if welcome_channel:
+        welcome_message = (
+            f"🚀 Welcome to the server, {member.mention}! 🌌\n"
+            "We're thrilled to have you on board. Feel free to explore and enjoy your time here! 🛸"
+        )
+        await welcome_channel.send(welcome_message)
+
 @tasks.loop(seconds=30)
 async def change_status():
     statuses = [
