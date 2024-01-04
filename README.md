@@ -30,25 +30,17 @@ Ad Astra is a versatile and fun Discord bot designed to add entertainment and ut
 
 3. **Run the Bot**: Execute the bot by running `python bot.py` in your terminal.
 
-## Commands
-
-- `$ping <target>`: Check bot responsiveness and latency.
-
-- `$repeat <message>`: Repeat a message and log it.
-
-- `$rules`: Display server rules (admin only).
-
-- `$purge <amount>`: Delete messages in bulk (admin only).
-
-- `$color <hex_code>`: Display a color image based on the provided hex code.
-
-- `$hello`: Greet the bot!
-
-- `$dice <sides>`: Roll a dice with the specified number of sides.
-
+- `$ping <target>`: Check the ping to a specified target.
+- `$repeat <message>`: Repeat a message and delete the original.
+- `$rules`: Display server rules (admin command).
+- `$purge <amount>`: Delete a specified number of messages (admin command).
+- `$color <hex_code>`: Generate and display a color block based on the provided hex code.
+- `$hello`: Greet the bot.
+- `$dice [sides]`: Roll a dice with the specified number of sides (default: 6).
 - `$flip`: Flip a coin.
-
-- `$shalli`: Get a yes or no answer.
+- `$shalli`: Ask a yes or no question.
+- `$rps <choice>`: Play Rock, Paper, Scissors with the bot.
+- `$gtn`: Play Guess the Number with the bot.
 
 ## Contributing
 

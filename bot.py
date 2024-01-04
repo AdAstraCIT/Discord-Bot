@@ -119,7 +119,7 @@ def is_valid_hex(hex_code):
         return len(hex_code) in [6, 8]
     except ValueError:
         return False
-
+    
 @bot.command()
 async def hello(ctx):
     await ctx.send(f"Hello, {ctx.author.name}!")
