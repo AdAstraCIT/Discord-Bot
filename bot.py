@@ -5,6 +5,7 @@ from discord.ext import commands, tasks
 from dotenv import load_dotenv
 import random
 import asyncio
+from PIL import Image, ImageDraw
 
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
@@ -15,6 +16,14 @@ bot = commands.Bot(command_prefix='$', intents=intents)
 async def on_ready():
     print(f'Logged in as {bot.user.name} ({bot.user.id})')
     change_status.start()
+
+@bot.event
+async def on_member_join(member):
+    welcome_channel = member.guild.system_channel
+    if welcome_channel:
+        welcome_message = (f"🚀 Welcome to the server, {member.mention}! 🌌\n"
+        "We're thrilled to have you on board. Feel free to explore and enjoy your time here! 🛸")
+        await welcome_channel.send(welcome_message)
 
 @tasks.loop(seconds=30)
 async def change_status():
@@ -55,6 +64,9 @@ async def ping(ctx, target):
 @bot.command(name='repeat')
 async def repeat(ctx, *, message):
     await ctx.message.delete()
+    moderation_channel_id = int(os.getenv('MODID'))
+    moderation_channel = ctx.guild.get_channel(moderation_channel_id)
+    await moderation_channel.send(f"{ctx.author.name} said: {message}")
     print(f"{ctx.author.name} Sent: {message}")
     await ctx.send(message)
 
@@ -87,9 +99,19 @@ async def color(ctx, hex_code: str):
     if not is_valid_hex(hex_code):
         await ctx.send("Invalid hex code. Please provide a valid hex code.")
         return
-    color_embed = discord.Embed(color=int(hex_code, 16))
-    color_embed.set_author(name=f"Color: #{hex_code.upper()}", icon_url=ctx.author.avatar.url)
-    await ctx.send(embed=color_embed)
+    
+    color = discord.Colour(int(hex_code, 16))
+    image = create_color_image(color)
+    image_path = "color_block.png"
+    image.save(image_path)
+    await ctx.send(file=discord.File(image_path))
+    os.remove(image_path)
+
+def create_color_image(color):
+    image = Image.new("RGB", (515, 512), color.to_rgb())
+    draw = ImageDraw.Draw(image)
+    draw.rectangle([0, 0, 515, 512], fill=color.to_rgb())
+    return image
 
 def is_valid_hex(hex_code):
     try:
@@ -116,5 +138,56 @@ async def flip(ctx):
 async def shalli(ctx):
     result = random.choice(["Yes", "No"])
     await ctx.send(result)
+
+@bot.command(name='rps')
+async def rock_paper_scissors(ctx, user_choice: str):
+    choices = ['rock', 'paper', 'scissors']
+    bot_choice = random.choice(choices)
+    user_choice = user_choice.lower()
+    if user_choice not in choices:
+        await ctx.send("Invalid choice! Please choose rock, paper, or scissors.")
+        return
+    result = determine_winner(user_choice, bot_choice)
+    await ctx.send(f"You chose: {user_choice.capitalize()}\nBot chose: {bot_choice.capitalize()}\nResult: {result}")
+
+def determine_winner(user_choice, bot_choice):
+    if user_choice == bot_choice:
+        return "It's a tie!"
+    elif (user_choice == 'rock' and bot_choice == 'scissors') or \
+         (user_choice == 'paper' and bot_choice == 'rock') or \
+         (user_choice == 'scissors' and bot_choice == 'paper'):
+        return "You win!"
+    else:
+        return "Bot wins!"
+
+@bot.command()
+async def gtn(ctx):
+    secret_number = random.randint(1, 10)
+    await ctx.send('Guess a number between 1 and 10.')
+
+    def check(message):
+        return message.author == ctx.author and message.content.isdigit()
+    try:
+        guess = await bot.wait_for('message', check=check, timeout=10.0)
+        if 1 <= int(guess.content) <= 10:
+            if int(guess.content) == secret_number:
+                await ctx.send('You guessed it!')
+            else:
+                await ctx.send('Nope, try again.')
+        else:
+            await ctx.send('Please enter a number between 1 and 10.')
+    except asyncio.TimeoutError:
+        await ctx.send('Time is up! You took too long to guess.')
+
+@bot.command()
+async def avatar(ctx, member: discord.Member = None):
+    if member is None:
+        member = ctx.author
+    avatar_url = member.avatar.url
+    embed = discord.Embed(title=f"{member.display_name}'s Avatar")
+    embed.set_image(url=avatar_url)
+
+    await ctx.send(embed=embed)
+
 
 bot.run(TOKEN)
