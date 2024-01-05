@@ -57,7 +57,7 @@ async def change_status():
     await bot.change_presence(activity=discord.Game(name=new_status))
 
 @bot.command()
-async def ping(ctx, target):
+async def ping(ctx, target='1.1.1.1'):
     result = subprocess.run(['ping', '-c', '4', target], capture_output=True, text=True)
     await ctx.send(f"```{result.stdout}```")
 
