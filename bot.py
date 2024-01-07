@@ -189,5 +189,8 @@ async def avatar(ctx, member: discord.Member = None):
 
     await ctx.send(embed=embed)
 
+@bot.slash_command(name = "test", description = "test")
+async def test(ctx):
+    await ctx.send("test successful")
 
 bot.run(TOKEN)
